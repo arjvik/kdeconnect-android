@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.kde.kdeconnect.NetworkPacket;
+import org.kde.kdeconnect.Plugins.MousePadPlugin.MousePadPlugin;
 import org.kde.kdeconnect.Plugins.Plugin;
 import org.kde.kdeconnect.Plugins.PluginFactory;
 import org.kde.kdeconnect_tp.R;
@@ -28,7 +29,7 @@ public class PresenterPlugin extends Plugin {
     private final static String PACKET_TYPE_MOUSEPAD_REQUEST = MousePadPlugin.PACKET_TYPE_MOUSEPAD_REQUEST;
 
     public boolean isPointerSupported() {
-        return device.supportsPacketType(PACKET_TYPE_PRESENTER);
+        return device.supportsPacketType(PACKET_TYPE_MOUSEPAD_REQUEST);
     }
 
     @Override
@@ -68,7 +69,7 @@ public class PresenterPlugin extends Plugin {
 
     @Override
     public String[] getOutgoingPacketTypes() {
-        return new String[]{PACKET_TYPE_MOUSEPAD_REQUEST, PACKET_TYPE_PRESENTER};
+        return new String[]{PACKET_TYPE_MOUSEPAD_REQUEST};
     }
 
     @Override
