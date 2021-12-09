@@ -24,9 +24,8 @@ import static org.kde.kdeconnect.Plugins.MousePadPlugin.KeyListenerView.SpecialK
 
 @PluginFactory.LoadablePlugin
 public class PresenterPlugin extends Plugin {
-
-    private final static String PACKET_TYPE_PRESENTER = "kdeconnect.presenter";
-    private final static String PACKET_TYPE_MOUSEPAD_REQUEST = "kdeconnect.mousepad.request";
+    
+    private final static String PACKET_TYPE_MOUSEPAD_REQUEST = MousePadPlugin.PACKET_TYPE_MOUSEPAD_REQUEST;
 
     public boolean isPointerSupported() {
         return device.supportsPacketType(PACKET_TYPE_PRESENTER);
@@ -78,14 +77,14 @@ public class PresenterPlugin extends Plugin {
     }
 
     public void sendNext() {
-        NetworkPacket np = new NetworkPacket(PACKET_TYPE_MOUSEPAD_REQUEST);
-        np.set("specialKey", SpecialKeysMap.get(KeyEvent.KEYCODE_PAGE_DOWN));
+       NetworkPacket np = new NetworkPacket(PACKET_TYPE_MOUSEPAD_REQUEST);
+        np.set("singleclick", true);
         device.sendPacket(np);
     }
 
     public void sendPrevious() {
         NetworkPacket np = new NetworkPacket(PACKET_TYPE_MOUSEPAD_REQUEST);
-        np.set("specialKey", SpecialKeysMap.get(KeyEvent.KEYCODE_PAGE_UP));
+        np.set("rightclick", true);
         device.sendPacket(np);
     }
 
@@ -102,22 +101,17 @@ public class PresenterPlugin extends Plugin {
     }
 
     public void sendPointer(float xDelta, float yDelta) {
-        NetworkPacket np = device.getAndRemoveUnsentPacket(NetworkPacket.PACKET_REPLACEID_PRESENTERPOINTER);
+        NetworkPacket np = device.getAndRemoveUnsentPacket(NetworkPacket.PACKET_REPLACEID_MOUSEMOVE);
         if (np == null) {
-            np = new NetworkPacket(PACKET_TYPE_PRESENTER);
+            np = new NetworkPacket(PACKET_TYPE_MOUSEPAD_REQUEST);
         } else {
             xDelta += np.getInt("dx");
             yDelta += np.getInt("dy");
         }
         np.set("dx", xDelta);
         np.set("dy", yDelta);
-        device.sendPacket(np, NetworkPacket.PACKET_REPLACEID_PRESENTERPOINTER);
+        device.sendPacket(np, NetworkPacket.PACKET_REPLACEID_MOUSEMOVE);
     }
 
-    public void stopPointer() {
-        device.getAndRemoveUnsentPacket(NetworkPacket.PACKET_REPLACEID_PRESENTERPOINTER);
-        NetworkPacket np = new NetworkPacket(PACKET_TYPE_PRESENTER);
-        np.set("stop", true);
-        device.sendPacket(np);
-    }
+    public void stopPointer() {}
 }
